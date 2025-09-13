@@ -3,6 +3,19 @@ const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
 
+
+// Add this as the VERY FIRST LINE in your server.js
+require('dotenv').config();
+
+// Now your other imports
+const mongoose = require('mongoose');
+// ... rest of your imports
+
+// Your server code...
+
+
+
+
 const connectDB = require('./config/db');
 
 // Import routes
@@ -24,6 +37,7 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 app.use('/api/auth', authRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/reports', reportRoutes);
+
 
 // Serve frontend
 app.get('*', (req, res) => {
