@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Government Fund Transparency Portal</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <div class="logo-icon">🏛️</div>
+                <div class="logo-text">
+                    <h1>Fund Transparency</h1>
+                    <span>Government Portal</span>
+                </div>
+            </div>
+            <nav class="nav">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="transactions.html" onclick="loadTransactions()" class="nav-link">Transactions</a>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="auth.html" class="nav-link login-btn">Sign In</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2>Transparency in Government Funding</h2>
+                <p class="hero-subtitle">Track every rupee, ensure accountability, and build public trust through real-time fund monitoring</p>
+                <div class="hero-buttons">
+                    <a href="#transactions" class="btn btn-primary">Explore Transactions</a>
+                    <a href="auth.html" class="btn btn-outline">Get Started</a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="floating-cards">
+                    <div class="card-mini">💰 ₹2.5K Cr</div>
+                    <div class="card-mini">📊 Live Data</div>
+                    <div class="card-mini">🔍 Full Transparency</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="section-header">
+                <h3>Real-Time Statistics</h3>
+                <p>Live data from government transactions</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">💵</div>
+                    <h4>Total Funds</h4>
+                    <div class="stat-value" id="totalFunds">Loading...</div>
+                    <div class="stat-label">Allocated This Year</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📝</div>
+                    <h4>Active Transactions</h4>
+                    <div class="stat-value" id="totalTransactions">Loading...</div>
+                    <div class="stat-label">Currently Processing</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <h4>Approved</h4>
+                    <div class="stat-value" id="approvedCount">Loading...</div>
+                    <div class="stat-label">Public Verified</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⏳</div>
+                    <h4>Under Review</h4>
+                    <div class="stat-value" id="pendingCount">Loading...</div>
+                    <div class="stat-label">Awaiting Approval</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Transactions Section -->
+    <section id="transactions" class="transactions-section">
+        <div class="container">
+            <div class="section-header">
+                <h3>Recent Public Transactions</h3>
+                <p>Latest government fund movements available for public review</p>
+            </div>
+            
+            <div class="filters-bar">
+                <div class="filter-group">
+                    <select id="statusFilter" onchange="filterTransactions()">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="flagged">Flagged</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <select id="categoryFilter" onchange="filterTransactions()">
+                        <option value="">All Categories</option>
+                        <option value="Education">Education</option>
+                        <option value="Healthcare">Healthcare</option>
+                        <option value="Infrastructure">Infrastructure</option>
+                        <option value="Defense">Defense</option>
+                    </select>
+                </div>
+                <div class="search-group">
+                    <input type="text" placeholder="Search transactions..." id="searchInput">
+                    <button class="search-btn">🔍</button>
+                </div>
+            </div>
+
+            <div id="transactionsList" class="transactions-grid">
+                <div class="loading-placeholder">
+                    <div class="loading-spinner"></div>
+                    <p>Loading transactions...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <div class="section-header">
+                <h3>Why Choose Our Platform?</h3>
+                <p>Built for transparency, accountability, and public trust</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h4>Real-Time Tracking</h4>
+                    <p>Monitor government fund movements as they happen with live updates and instant notifications</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h4>Secure & Verified</h4>
+                    <p>All transactions are cryptographically secured and verified by multiple government authorities</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h4>Public Participation</h4>
+                    <p>Citizens can review, approve, and flag transactions to ensure accountability and proper fund usage</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h4>Detailed Analytics</h4>
+                    <p>Comprehensive reports and analytics help track spending patterns and identify optimization opportunities</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Government Fund Transparency</h4>
+                    <p>Promoting accountability and trust in public financial management through technology and transparency.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#transactions">Transactions</a></li>
+                        <li><a href="auth.html">Sign In</a></li>
+                        <li><a href="#about">About</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li>📧 transparency@gov.in</li>
+                        <li>📞 1800-XXX-XXXX</li>
+                        <li>🏛️ New Delhi, India</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Government of India - Fund Transparency Initiative. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Load data on page load
+        window.addEventListener('load', () => {
+            loadPublicStats();
+            loadPublicTransactions();
+        });
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

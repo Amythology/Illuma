@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Government Fund Transparency</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .auth-container {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            position: relative;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-header h1 {
+            color: #1e40af;
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-header p {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            background: #f9fafb;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #1e40af;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            background: #f9fafb;
+            transition: all 0.2s ease;
+        }
+
+        .form-group select:focus {
+            outline: none;
+            border-color: #1e40af;
+            background: white;
+        }
+
+        .btn {
+            width: 100%;
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 1rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(30, 64, 175, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 2rem;
+            color: #6b7280;
+        }
+
+        .auth-switch a {
+            color: #1e40af;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-switch a:hover {
+            text-decoration: underline;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .message.error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .message.success {
+            background: #f0fdf4;
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .back-link {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+
+        .back-link:hover {
+            color: #1e40af;
+        }
+
+        @media (max-width: 480px) {
+            .auth-container {
+                padding: 2rem;
+            }
+            
+            .auth-header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <a href="index.html" class="back-link">← Back to Home</a>
+        
+        <!-- Login Form -->
+        <div id="loginForm">
+            <div class="auth-header">
+                <h1>Welcome Back</h1>
+                <p>Sign in to your account</p>
+            </div>
+
+            <div id="loginMessage"></div>
+
+            <form id="signInForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email Address</label>
+                    <input type="email" id="loginEmail" name="email" placeholder="Enter your email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" name="password" placeholder="Enter your password" required>
+                </div>
+
+                <button type="submit" class="btn" id="loginBtn">
+                    Sign In
+                </button>
+            </form>
+
+            <div class="auth-switch">
+                Don't have an account? <a href="#" onclick="showRegister()">Create one</a>
+            </div>
+        </div>
+
+        <!-- Register Form -->
+        <div id="registerForm" class="hidden">
+            <div class="auth-header">
+                <h1>Create Account</h1>
+                <p>Join the transparency initiative</p>
+            </div>
+
+            <div id="registerMessage"></div>
+
+            <form id="signUpForm">
+                <div class="form-group">
+                    <label for="registerName">Full Name</label>
+                    <input type="text" id="registerName" name="name" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerEmail">Email Address</label>
+                    <input type="email" id="registerEmail" name="email" placeholder="Enter your email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" name="password" placeholder="Create a password (min 6 characters)" required minlength="6">
+                </div>
+
+                <div class="form-group">
+                    <label for="registerRole">Account Type</label>
+                    <select id="registerRole" name="role" required onchange="toggleDepartmentField()">
+                        <option value="">Select your role</option>
+                        <option value="public">General Public</option>
+                        <option value="govt_official">Government Official</option>
+                    </select>
+                </div>
+
+                <div class="form-group hidden" id="departmentField">
+                    <label for="registerDepartment">Department</label>
+                    <select id="registerDepartment" name="department">
+                        <option value="">Select your department</option>
+                        <option value="Education">Education</option>
+                        <option value="Healthcare">Healthcare</option>
+                        <option value="Infrastructure">Infrastructure</option>
+                        <option value="Defense">Defense</option>
+                        <option value="Agriculture">Agriculture</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Social Welfare">Social Welfare</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn" id="registerBtn">
+                    Create Account
+                </button>
+            </form>
+
+            <div class="auth-switch">
+                Already have an account? <a href="#" onclick="showLogin()">Sign in</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        const API_BASE = '/api';
+
+        // Show/Hide forms
+        function showLogin() {
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('registerForm').classList.add('hidden');
+        }
+
+        function showRegister() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('registerForm').classList.remove('hidden');
+        }
+
+        function toggleDepartmentField() {
+            const role = document.getElementById('registerRole').value;
+            const deptField = document.getElementById('departmentField');
+            const deptSelect = document.getElementById('registerDepartment');
+            
+            if (role === 'govt_official') {
+                deptField.classList.remove('hidden');
+                deptSelect.required = true;
+            } else {
+                deptField.classList.add('hidden');
+                deptSelect.required = false;
+            }
+        }
+
+        // Message display
+        function showMessage(message, type, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<div class="message ${type}">${message}</div>`;
+            
+            // Auto-hide success messages
+            if (type === 'success') {
+                setTimeout(() => {
+                    container.innerHTML = '';
+                }, 3000);
+            }
+        }
+
+        // Login form handler
+        document.getElementById('signInForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            const loginBtn = document.getElementById('loginBtn');
+            
+            // Validation
+            if (!email || !password) {
+                showMessage('Please fill in all fields', 'error', 'loginMessage');
+                return;
+            }
+
+            // Show loading state
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<span class="loading"></span>Signing in...';
+
+            try {
+                console.log('Attempting login to:', `${API_BASE}/auth/login`);
+                
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                console.log('Response status:', response.status);
+                const data = await response.json();
+                console.log('Response data:', data);
+
+                if (data.success) {
+                    // Store auth data
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    showMessage('Login successful! Redirecting...', 'success', 'loginMessage');
+                    
+                    // Redirect based on role
+                    setTimeout(() => {
+                        if (data.user.role === 'govt_official') {
+                            window.location.href = 'dashboard.html';
+                        } else {
+                            window.location.href = 'public-dashboard.html';
+                        }
+                    }, 1000);
+
+                } else {
+                    showMessage(data.message || 'Invalid email or password', 'error', 'loginMessage');
+                }
+
+            } catch (error) {
+                console.error('Login error:', error);
+                showMessage('Unable to connect to server. Please try again.', 'error', 'loginMessage');
+            } finally {
+                // Reset button
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = 'Sign In';
+            }
+        });
+
+        // Register form handler
+        document.getElementById('signUpForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('registerName').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value.trim();
+            const role = document.getElementById('registerRole').value;
+            const department = document.getElementById('registerDepartment').value;
+            const registerBtn = document.getElementById('registerBtn');
+
+            // Validation
+            if (!name || !email || !password || !role) {
+                showMessage('Please fill in all required fields', 'error', 'registerMessage');
+                return;
+            }
+
+            if (role === 'govt_official' && !department) {
+                showMessage('Please select your department', 'error', 'registerMessage');
+                return;
+            }
+
+            if (password.length < 6) {
+                showMessage('Password must be at least 6 characters', 'error', 'registerMessage');
+                return;
+            }
+
+            // Show loading state
+            registerBtn.disabled = true;
+            registerBtn.innerHTML = '<span class="loading"></span>Creating account...';
+
+            try {
+                console.log('Attempting register to:', `${API_BASE}/auth/register`);
+                
+                const response = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name, email, password, role, department }),
+                });
+
+                const data = await response.json();
+                console.log('Register response:', data);
+
+                if (data.success) {
+                    showMessage('Account created successfully! Please sign in.', 'success', 'registerMessage');
+                    
+                    // Switch to login form after delay
+                    setTimeout(() => {
+                        showLogin();
+                        document.getElementById('loginEmail').value = email;
+                    }, 2000);
+
+                } else {
+                    showMessage(data.message || 'Registration failed', 'error', 'registerMessage');
+                }
+
+            } catch (error) {
+                console.error('Register error:', error);
+                showMessage('Unable to connect to server. Please try again.', 'error', 'registerMessage');
+            } finally {
+                // Reset button
+                registerBtn.disabled = false;
+                registerBtn.innerHTML = 'Create Account';
+            }
+        });
+
+        // Check if already logged in
+        window.addEventListener('load', function() {
+            const token = localStorage.getItem('token');
+            const user = localStorage.getItem('user');
+            
+            if (token && user) {
+                const userData = JSON.parse(user);
+                if (userData.role === 'govt_official') {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    window.location.href = 'public-dashboard.html';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

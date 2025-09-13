@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactions - Government Fund Transparency Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #1e40af;
+            --primary-light: #3b82f6;
+            --accent-gold: #f59e0b;
+            --success-green: #10b981;
+            --warning-orange: #f97316;
+            --danger-red: #ef4444;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --border-light: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: var(--bg-light);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-white);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+        }
+
+        .logo-text h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            line-height: 1.2;
+        }
+
+        .logo-text span {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 0;
+            position: relative;
+            transition: color 0.2s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary-blue);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-gold);
+            transition: width 0.2s ease;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 3rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><defs><radialGradient id="a" cx="50%" cy="50%"><stop offset="0%" stop-color="rgba(255,255,255,0.1)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></radialGradient></defs><circle cx="25" cy="10" r="15" fill="url(%23a)"/><circle cx="75" cy="10" r="10" fill="url(%23a)"/></svg>') repeat;
+            opacity: 0.1;
+        }
+
+        .page-header-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
+
+        .page-header p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            background: var(--bg-white);
+            padding: 2rem 0;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        /* Main Content */
+        .main {
+            padding: 2rem 0;
+        }
+
+        /* Filters Section */
+        .filters-section {
+            background: var(--bg-white);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2rem;
+        }
+
+        .filters-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .filters-header h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .view-toggle {
+            display: flex;
+            background: var(--bg-light);
+            border-radius: 0.5rem;
+            padding: 0.25rem;
+        }
+
+        .toggle-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            border-radius: 0.25rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-btn.active {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-weight: 500;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 0.75rem;
+            border: 1px solid var(--border-light);
+            border-radius: 0.5rem;
+            background: var(--bg-white);
+            font-size: 0.875rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+        }
+
+        .search-container {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-light);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .search-btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .search-btn:hover {
+            background: var(--primary-light);
+        }
+
+        .clear-btn {
+            background: var(--text-light);
+            color: white;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        /* Transactions Grid */
+        .transactions-container {
+            background: var(--bg-white);
+            border-radius: 1rem;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+
+        .transactions-header {
+            background: var(--bg-light);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .transactions-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .results-count {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        /* Card View */
+        .transactions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .transaction-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border-light);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .transaction-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-blue);
+        }
+
+        .transaction-header {
+            display: flex;
+            justify-content: between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .transaction-id {
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.75rem;
+            color: var(--text-light);
+            background: var(--bg-light);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .transaction-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .transaction-amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--success-green);
+            margin-bottom: 1rem;
+        }
+
+        .transaction-details {
+            display: grid;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+        }
+
+        .detail-label {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .detail-value {
+            font-size: 0.875rem;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .department-flow {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .arrow {
+            color: var(--accent-gold);
+            font-weight: 600;
+        }
+
+        .transaction-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-approved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-flagged {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-rejected {
+            background: #fce7f3;
+            color: #7c2d12;
+        }
+
+        .interaction-stats {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-approve {
+            background: var(--success-green);
+            color: white;
+        }
+
+        .btn-approve:hover {
+            background: #059669;
+        }
+
+        .btn-flag {
+            background: var(--danger-red);
+            color: white;
+        }
+
+        .btn-flag:hover {
+            background: #dc2626;
+        }
+
+        /* Table View */
+        .transactions-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .transactions-table th,
+        .transactions-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .transactions-table th {
+            background: var(--bg-light);
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .transactions-table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        .transactions-table tbody tr:hover {
+            background: var(--bg-light);
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem;
+            color: var(--text-light);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border-light);
+            border-top: 4px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-light);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            padding: 2rem;
+        }
+
+        .page-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-light);
+            background: var(--bg-white);
+            color: var(--text-dark);
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .page-btn:hover,
+        .page-btn.active {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-container {
+                flex-direction: column;
+            }
+            
+            .transactions-grid {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+            
+            .nav {
+                gap: 1rem;
+            }
+            
+            .view-toggle {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">🏛️</div>
+                <div class="logo-text">
+                    <h1>Fund Transparency</h1>
+                    <span>Government Portal</span>
+                </div>
+            </a>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="transactions.html" class="nav-link active">Transactions</a>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="auth.html" class="nav-link">Sign In</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="page-header-content">
+                <h1>Government Transactions</h1>
+                <p>Complete transparency in public fund movements. Every transaction verified and publicly accessible.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <section class="stats-bar">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalTransactions">0</div>
+                    <div class="stat-label">Total Transactions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalAmount">₹0</div>
+                    <div class="stat-label">Total Amount</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="approvedTransactions">0</div>
+                    <div class="stat-label">Approved</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="flaggedTransactions">0</div>
+                    <div class="stat-label">Flagged</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Filters Section -->
+            <section class="filters-section">
+                <div class="filters-header">
+                    <h3>Filter & Search Transactions</h3>
+                    <div class="view-toggle">
+                        <button class="toggle-btn active" onclick="switchView('cards')">Cards</button>
+                        <button class="toggle-btn" onclick="switchView('table')">Table</button>
+                    </div>
+                </div>
+                
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label for="statusFilter">Status</label>
+                        <select id="statusFilter" onchange="applyFilters()">
+                            <option value="">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="flagged">Flagged</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="categoryFilter">Category</label>
+                        <select id="categoryFilter" onchange="applyFilters()">
+                            <option value="">All Categories</option>
+                            <option value="Education">Education</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Infrastructure">Infrastructure</option>
+                            <option value="Defense">Defense</option>
+                            <option value="Agriculture">Agriculture</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Social Welfare">Social Welfare</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="amountMin">Min Amount (₹)</label>
+                        <input type="number" id="amountMin" placeholder="0" onchange="applyFilters()">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="amountMax">Max Amount (₹)</label>
+                        <input type="number" id="amountMax" placeholder="No limit" onchange="applyFilters()">
+                    </div>
+                    
+                    <div class="search-container">
+                        <input type="text" class="search-input" id="searchInput" placeholder="Search by title, department, or purpose...">
+                        <button class="search-btn" onclick="applyFilters()">🔍 Search</button>
+                        <button class="clear-btn" onclick="clearFilters()">Clear</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Transactions Container -->
+            <section class="transactions-container">
+                <div class="transactions-header">
+                    <h3>Transactions</h3>
+                    <div class="results-count" id="resultsCount">Loading...</div>
+                </div>
+                
+                <!-- Cards View (Default) -->
+                <div id="cardsView" class="transactions-grid">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Loading transactions...</p>
+                    </div>
+                </div>
+                
+                <!-- Table View (Hidden by default) -->
+                <div id="tableView" style="display: none;">
+                    <table class="transactions-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Amount</th>
+                                <th>From → To</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Table rows will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="pagination">
+                    <button class="page-btn" id="prevBtn" onclick="previousPage()">← Previous</button>
+                    <span id="pageInfo">Page 1 of 1</span>
+                    <button class="page-btn" id="nextBtn" onclick="nextPage()">Next →</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Global variables
+        let currentView = 'cards';
+        let currentPage = 1;
+        let totalPages = 1;
+        let allTransactions = [];
+        let filteredTransactions = [];
+
+        // Initialize page
+        window.addEventListener('load', () => {
+            loadTransactions();
+            updateStats();
+        });
+
+        // Load transactions from API
+        async function loadTransactions() {
+            try {
+                const response = await fetch('/api/transactions');
+                const data = await response.json();
+                
+                if (data.success) {
+                    allTransactions = data.data;
+                    filteredTransactions = allTransactions;
+                    displayTransactions();
+                    updateStats();
+                } else {
+                    showError('Failed to load transactions');
+                }
+            } catch (error) {
+                console.error('Error loading transactions:', error);
+                showError('Unable to connect to server');
+            }
+        }
+
+        // Display transactions
+        function displayTransactions() {
+            const startIndex = (currentPage - 1) * 12;
+            const endIndex = startIndex + 12;
+            const pageTransactions = filteredTransactions.slice(startIndex, endIndex);
+            
+            if (currentView === 'cards') {
+                displayCardsView(pageTransactions);
+            } else {
+                displayTableView(pageTransactions);
+            }
+            
+            updatePagination();
+            updateResultsCount();
+        }
+
+        // Display cards view
+        function displayCardsView(transactions) {
+            const container = document.getElementById('cardsView');
+            
+            if (transactions.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <h3>No transactions found</h3>
+                        <p>Try adjusting your filters or search terms</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = transactions.map(transaction => `
+                <div class="transaction-card">
+                    <div class="transaction-id">#${transaction.transactionId || 'N/A'}</div>
+                    <div class="transaction-title">${transaction.title}</div>
+                    <div class="transaction-amount">₹${(transaction.amount || 0).toLocaleString('en-IN')}</div>
+                    
+                    <div class="department-flow">
+                        <span>${transaction.fromDepartment}</span>
+                        <span class="arrow">→</span>
+                        <span>${transaction.toDepartment}</span>
+                    </div>
+                    
+                    <div class="transaction-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Category</span>
+                            <span class="detail-value">${transaction.category}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Date</span>
+                            <span class="detail-value">${new Date(transaction.createdAt || Date.now()).toLocaleDateString('en-IN')}</span>
+                        </div>
+                    </div>
+                    
+                    <p style="color: var(--text-light); font-size: 0.875rem; margin-bottom: 1rem; line-height: 1.4;">
+                        ${(transaction.description || '').substring(0, 120)}${(transaction.description || '').length > 120 ? '...' : ''}
+                    </p>
+                    
+                    <div class="transaction-footer">
+                        <span class="status-badge status-${(transaction.status || 'pending').toLowerCase()}">${transaction.status || 'Pending'}</span>
+                        <div class="interaction-stats">
+                            <div class="stat-item">
+                                <span>👍</span>
+                                <span>${transaction.approvals || 0}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>🚩</span>
+                                <span>${transaction.flags || 0}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="action-btn btn-approve" onclick="approveTransaction('${transaction._id}')">
+                            👍 Approve
+                        </button>
+                        <button class="action-btn btn-flag" onclick="flagTransaction('${transaction._id}')">
+                            🚩 Flag
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Display table view
+        function displayTableView(transactions) {
+            const tbody = document.getElementById('tableBody');
+            
+            if (transactions.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 3rem; color: var(--text-light);">
+                            No transactions found
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = transactions.map(transaction => `
+                <tr>
+                    <td style="font-family: monospace; font-size: 0.75rem;">${(transaction.transactionId || '').substring(0, 8)}...</td>
+                    <td>${transaction.title}</td>
+                    <td style="font-weight: 600; color: var(--success-green);">₹${(transaction.amount || 0).toLocaleString('en-IN')}</td>
+                    <td style="font-size: 0.875rem;">${transaction.fromDepartment} → ${transaction.toDepartment}</td>
+                    <td>${transaction.category}</td>
+                    <td><span class="status-badge status-${(transaction.status || 'pending').toLowerCase()}">${transaction.status || 'Pending'}</span></td>
+                    <td>${new Date(transaction.createdAt || Date.now()).toLocaleDateString('en-IN')}</td>
+                    <td>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="action-btn btn-approve" onclick="approveTransaction('${transaction._id}')">👍</button>
+                            <button class="action-btn btn-flag" onclick="flagTransaction('${transaction._id}')">🚩</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Switch between views
+        function switchView(view) {
+            currentView = view;
+            
+            // Update toggle buttons
+            document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Show/hide views
+            if (view === 'cards') {
+                document.getElementById('cardsView').style.display = 'grid';
+                document.getElementById('tableView').style.display = 'none';
+            } else {
+                document.getElementById('cardsView').style.display = 'none';
+                document.getElementById('tableView').style.display = 'block';
+            }
+            
+            displayTransactions();
+        }
+
+        // Apply filters
+        function applyFilters() {
+            const status = document.getElementById('statusFilter').value;
+            const category = document.getElementById('categoryFilter').value;
+            const minAmount = parseFloat(document.getElementById('amountMin').value) || 0;
+            const maxAmount = parseFloat(document.getElementById('amountMax').value) || Infinity;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            filteredTransactions = allTransactions.filter(transaction => {
+                const matchesStatus = !status || (transaction.status || '').toLowerCase() === status.toLowerCase();
+                const matchesCategory = !category || transaction.category === category;
+                const matchesAmount = (transaction.amount || 0) >= minAmount && (transaction.amount || 0) <= maxAmount;
+                const matchesSearch = !searchTerm || 
+                    (transaction.title || '').toLowerCase().includes(searchTerm) ||
+                    (transaction.fromDepartment || '').toLowerCase().includes(searchTerm) ||
+                    (transaction.toDepartment || '').toLowerCase().includes(searchTerm) ||
+                    (transaction.description || '').toLowerCase().includes(searchTerm);
+                
+                return matchesStatus && matchesCategory && matchesAmount && matchesSearch;
+            });
+            
+            currentPage = 1;
+            totalPages = Math.ceil(filteredTransactions.length / 12);
+            displayTransactions();
+        }
+
+        // Clear filters
+        function clearFilters() {
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('amountMin').value = '';
+            document.getElementById('amountMax').value = '';
+            document.getElementById('searchInput').value = '';
+            
+            filteredTransactions = allTransactions;
+            currentPage = 1;
+            totalPages = Math.ceil(filteredTransactions.length / 12);
+            displayTransactions();
+        }
+
+        // Pagination
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                displayTransactions();
+            }
+        }
+
+        function nextPage() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayTransactions();
+            }
+        }
+
+        function updatePagination() {
+            totalPages = Math.ceil(filteredTransactions.length / 12);
+            document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages;
+        }
+
+        function updateResultsCount() {
+            const start = (currentPage - 1) * 12 + 1;
+            const end = Math.min(currentPage * 12, filteredTransactions.length);
+            document.getElementById('resultsCount').textContent = 
+                `Showing ${start}-${end} of ${filteredTransactions.length} transactions`;
+        }
+
+        // Update stats
+        function updateStats() {
+            const total = allTransactions.length;
+            const totalAmount = allTransactions.reduce((sum, t) => sum + (t.amount || 0), 0);
+            const approved = allTransactions.filter(t => (t.status || '').toLowerCase() === 'approved').length;
+            const flagged = allTransactions.filter(t => (t.status || '').toLowerCase() === 'flagged').length;
+            
+            document.getElementById('totalTransactions').textContent = total.toLocaleString();
+            document.getElementById('totalAmount').textContent = `₹${totalAmount.toLocaleString('en-IN')}`;
+            document.getElementById('approvedTransactions').textContent = approved.toLocaleString();
+            document.getElementById('flaggedTransactions').textContent = flagged.toLocaleString();
+        }
+
+        // Transaction actions
+        async function approveTransaction(transactionId) {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    alert('Please sign in to approve transactions');
+                    window.location.href = 'auth.html';
+                    return;
+                }
+
+                const response = await fetch('/api/reports', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        transactionId,
+                        type: 'approve'
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    alert('Transaction approved successfully!');
+                    loadTransactions(); // Refresh data
+                } else {
+                    alert(data.message || 'Failed to approve transaction');
+                }
+            } catch (error) {
+                alert('Error approving transaction');
+            }
+        }
+
+        async function flagTransaction(transactionId) {
+            const reason = prompt('Please provide a reason for flagging this transaction:');
+            if (!reason) return;
+
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    alert('Please sign in to flag transactions');
+                    window.location.href = 'auth.html';
+                    return;
+                }
+
+                const response = await fetch('/api/reports', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        transactionId,
+                        type: 'flag',
+                        reason
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    alert('Transaction flagged successfully!');
+                    loadTransactions(); // Refresh data
+                } else {
+                    alert(data.message || 'Failed to flag transaction');
+                }
+            } catch (error) {
+                alert('Error flagging transaction');
+            }
+        }
+
+        function showError(message) {
+            const container = document.getElementById('cardsView');
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">⚠️</div>
+                    <h3>Error Loading Transactions</h3>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Government Dashboard - Fund Transparency Portal</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <img src="https://via.placeholder.com/50x50/004080/FFFFFF?text=GOV" alt="Government Logo">
+                <h1>Government Dashboard</h1>
+            </div>
+            <nav class="nav">
+                <a href="#" onclick="showSection('overview')" class="nav-link active">Overview</a>
+                <a href="#" onclick="showSection('transactions')" class="nav-link">My Transactions</a>
+                <a href="#" onclick="showSection('add-transaction')" class="nav-link">Add Transaction</a>
+                <a href="#" onclick="showSection('reports')" class="nav-link">Reports</a>
+                <div class="user-info">
+                    <span id="userName">Loading...</span>
+                    <button onclick="logout()" class="btn btn-small">Logout</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="dashboard-main">
+        <!-- Overview Section -->
+        <section id="overview" class="dashboard-section">
+            <div class="container">
+                <h2>Dashboard Overview</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>My Transactions</h3>
+                        <p class="stat-value" id="myTransactionsCount">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Amount</h3>
+                        <p class="stat-value" id="myTotalAmount">₹0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Approved</h3>
+                        <p class="stat-value" id="myApprovedCount">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Pending</h3>
+                        <p class="stat-value" id="myPendingCount">0</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Transactions Section -->
+        <section id="transactions" class="dashboard-section" style="display: none;">
+            <div class="container">
+                <h2>My Transactions</h2>
+                <div id="myTransactionsList" class="transactions-grid">
+                    Loading...
+                </div>
+            </div>
+        </section>
+
+        <!-- Add Transaction Section -->
+        <section id="add-transaction" class="dashboard-section" style="display: none;">
+            <div class="container">
+                <h2>Add New Transaction</h2>
+                <form id="addTransactionForm" class="transaction-form" onsubmit="handleAddTransaction(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="title">Transaction Title</label>
+                            <input type="text" id="title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="amount">Amount (₹)</label>
+                            <input type="number" id="amount" required min="1" step="0.01">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" required rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fromDepartment">From Department</label>
+                            <select id="fromDepartment" required>
+                                <option value="">Select Department</option>
+                                <option value="Education">Education</option>
+                                <option value="Healthcare">Healthcare</option>
+                                <option value="Infrastructure">Infrastructure</option>
+                                <option value="Defense">Defense</option>
+                                <option value="Agriculture">Agriculture</option>
+                                <option value="Technology">Technology</option>
+                                <option value="Social Welfare">Social Welfare</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="toDepartment">To Department</label>
+                            <select id="toDepartment" required>
+                                <option value="">Select Department</option>
+                                <option value="Education">Education</option>
+                                <option value="Healthcare">Healthcare</option>
+                                <option value="Infrastructure">Infrastructure</option>
+                                <option value="Defense">Defense</option>
+                                <option value="Agriculture">Agriculture</option>
+                                <option value="Technology">Technology</option>
+                                <option value="Social Welfare">Social Welfare</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="category">Category</label>
+                            <select id="category" required>
+                                <option value="">Select Category</option>
+                                <option value="Education">Education</option>
+                                <option value="Healthcare">Healthcare</option>
+                                <option value="Infrastructure">Infrastructure</option>
+                                <option value="Defense">Defense</option>
+                                <option value="Agriculture">Agriculture</option>
+                                <option value="Technology">Technology</option>
+                                <option value="Social Welfare">Social Welfare</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="fiscalYear">Fiscal Year</label>
+                            <select id="fiscalYear" required>
+                                <option value="2025-26">2025-26</option>
+                                <option value="2024-25">2024-25</option>
+                                <option value="2023-24">2023-24</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Submit Transaction</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Reports Section -->
+        <section id="reports" class="dashboard-section" style="display: none;">
+            <div class="container">
+                <h2>Transaction Reports</h2>
+                <div class="reports-tabs">
+                    <button onclick="showReportType('flagged')" class="tab-btn active">Flagged Transactions</button>
+                    <button onclick="showReportType('approved')" class="tab-btn">Approved Transactions</button>
+                </div>
+                <div id="reportsList" class="reports-grid">
+                    Loading reports...
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Check authentication on page load
+        window.addEventListener('load', () => {
+            checkAuth();
+            loadDashboardData();
+        });
+
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (!token || user.role !== 'govt_official') {
+                window.location.href = 'auth.html';
+                return;
+            }
+            
+            document.getElementById('userName').textContent = user.name;
+        }
+
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.dashboard-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Remove active class from nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName).style.display = 'block';
+            
+            // Add active class to clicked nav link
+            event.target.classList.add('active');
+            
+            // Load section-specific data
+            if (sectionName === 'transactions') {
+                loadMyTransactions();
+            } else if (sectionName === 'reports') {
+                loadReports('flagged');
+            }
+        }
+
+        async function handleAddTransaction(event) {
+            event.preventDefault();
+            
+            const formData = {
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                amount: parseFloat(document.getElementById('amount').value),
+                fromDepartment: document.getElementById('fromDepartment').value,
+                toDepartment: document.getElementById('toDepartment').value,
+                category: document.getElementById('category').value,
+                fiscalYear: document.getElementById('fiscalYear').value
+            };
+            
+            try {
+                const response = await fetch('/api/transactions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showMessage('Transaction added successfully!', 'success');
+                    document.getElementById('addTransactionForm').reset();
+                    loadDashboardData(); // Refresh stats
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('Failed to add transaction. Please try again.', 'error');
+            }
+        }
+
+        async function loadDashboardData() {
+            // Load user's transaction statistics
+            try {
+                const response = await fetch('/api/transactions?createdBy=' + JSON.parse(localStorage.getItem('user')).id, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const transactions = data.data;
+                    document.getElementById('myTransactionsCount').textContent = transactions.length;
+                    
+                    const totalAmount = transactions.reduce((sum, t) => sum + t.amount, 0);
+                    document.getElementById('myTotalAmount').textContent = `₹${totalAmount.toLocaleString('en-IN')}`;
+                    
+                    const approved = transactions.filter(t => t.status === 'approved').length;
+                    document.getElementById('myApprovedCount').textContent = approved;
+                    
+                    const pending = transactions.filter(t => t.status === 'pending').length;
+                    document.getElementById('myPendingCount').textContent = pending;
+                }
+            } catch (error) {
+                console.error('Failed to load dashboard data:', error);
+            }
+        }
+
+        async function loadMyTransactions() {
+            const userId = JSON.parse(localStorage.getItem('user')).id;
+            
+            try {
+                const response = await fetch(`/api/transactions?createdBy=${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayTransactions(data.data, 'myTransactionsList');
+                }
+            } catch (error) {
+                document.getElementById('myTransactionsList').innerHTML = 'Failed to load transactions.';
+            }
+        }
+
+        function showReportType(type) {
+            // Update active tab
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            loadReports(type);
+        }
+
+        async function loadReports(type) {
+            try {
+                const response = await fetch(`/api/transactions?status=${type}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayReports(data.data, type);
+                }
+            } catch (error) {
+                document.getElementById('reportsList').innerHTML = 'Failed to load reports.';
+            }
+        }
+
+        function displayReports(transactions, type) {
+            const container = document.getElementById('reportsList');
+            
+            if (transactions.length === 0) {
+                container.innerHTML = `<p>No ${type} transactions found.</p>`;
+                return;
+            }
+            
+            container.innerHTML = transactions.map(transaction => `
+                <div class="transaction-card ${transaction.status}">
+                    <h3>${transaction.title}</h3>
+                    <p class="amount">₹${transaction.amount.toLocaleString('en-IN')}</p>
+                    <p class="description">${transaction.description}</p>
+                    <p class="department">${transaction.fromDepartment} → ${transaction.toDepartment}</p>
+                    <p class="stats">👍 ${transaction.approvals} | 🚩 ${transaction.flags}</p>
+                    <span class="status-badge status-${transaction.status}">${transaction.status}</span>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>

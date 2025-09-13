@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Dashboard - Fund Transparency Portal</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <img src="https://via.placeholder.com/50x50/004080/FFFFFF?text=GOV" alt="Government Logo">
+                <h1>Public Dashboard</h1>
+            </div>
+            <nav class="nav">
+                <a href="#" onclick="showSection('overview')" class="nav-link active">Overview</a>
+                <a href="#" onclick="showSection('transactions')" class="nav-link">All Transactions</a>
+                <a href="#" onclick="showSection('flagged')" class="nav-link">Flagged</a>
+                <a href="#" onclick="showSection('approved')" class="nav-link">Approved</a>
+                <div class="user-info">
+                    <span id="userName">Loading...</span>
+                    <button onclick="logout()" class="btn btn-small">Logout</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="dashboard-main">
+        <!-- Overview Section -->
+        <section id="overview" class="dashboard-section">
+            <div class="container">
+                <h2>Public Transparency Dashboard</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Transactions</h3>
+                        <p class="stat-value" id="totalTransactions">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Funds</h3>
+                        <p class="stat-value" id="totalFunds">₹0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Approved</h3>
+                        <p class="stat-value" id="approvedCount">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Flagged</h3>
+                        <p class="stat-value" id="flaggedCount">0</p>
+                    </div>
+                </div>
+                <div class="quick-actions">
+                    <h3>Quick Actions</h3>
+                    <p>Help maintain transparency by reviewing government transactions:</p>
+                    <div class="action-buttons">
+                        <button onclick="showSection('transactions')" class="btn btn-primary">Review Transactions</button>
+                        <button onclick="showSection('flagged')" class="btn btn-secondary">View Flagged Items</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- All Transactions Section -->
+        <section id="transactions" class="dashboard-section" style="display: none;">
+            <div class="container">
+                <h2>All Government Transactions</h2>
+                <div class="filters">
+                    <select id="statusFilter" onchange="filterTransactions()">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="flagged">Flagged</option>
+                    </select>
+                    <select id="categoryFilter" onchange="filterTransactions()">
+                        <option value="">All Categories</option>
+                        <option value="Education">Education</option>
+                        <option value="Healthcare">Healthcare</option>
+                        <option value="Infrastructure">Infrastructure</option>
+                        <option value="Defense">Defense</option>
+                    </select>
+                </div>
+                <div id="transactionsList" class="transactions-grid">
+                    Loading transactions...
+                </div>
+            </div>
+        </section>
+
+        <!-- Flagged Transactions -->
+        <section id="flagged" class="dashboard-section" style="display: none;">
+            <div class="container">
+                <h2>Flagged Transactions</h2>
+                <p class="section-description">These transactions have been flagged by the public for review.</p>
+                <div id="flaggedList" class="transactions-grid">
+                    Loading flagged transactions...
+                </div>
+            </div>
+        </section>
+
+        <!-- Approved Transactions -->
+        <section id="approved" class="dashboard-section" style="display: none;">
+            <div class="container">
+                <h2>Approved Transactions</h2>
+                <p class="section-description">These transactions have been approved by public review.</p>
+                <div id="approvedList" class="transactions-grid">
+                    Loading approved transactions...
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/app.js"></script>
+    <script>
+        window.addEventListener('load', () => {
+            checkAuth();
+            loadPublicDashboard();
+        });
+
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (!token || user.role !== 'public') {
+                window.location.href = 'auth.html';
+                return;
+            }
+            
+            document.getElementById('userName').textContent = user.name;
+        }
+
+        function showSection(sectionName) {
+            document.querySelectorAll('.dashboard-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            document.getElementById(sectionName).style.display = 'block';
+            event.target.classList.add('active');
+            
+            if (sectionName === 'transactions') {
+                loadAllTransactions();
+            } else if (sectionName === 'flagged') {
+                loadTransactionsByStatus('flagged');
+            } else if (sectionName === 'approved') {
+                loadTransactionsByStatus('approved');
+            }
+        }
+
+        async function loadPublicDashboard() {
+            try {
+                const [transactionsResponse, analyticsResponse] = await Promise.all([
+                    fetch('/api/transactions'),
+                    fetch('/api/transactions/analytics/summary')
+                ]);
+                
+                const transactionsData = await transactionsResponse.json();
+                const analyticsData = await analyticsResponse.json();
+                
+                if (transactionsData.success) {
+                    const transactions = transactionsData.data;
+                    document.getElementById('totalTransactions').textContent = transactions.length;
+                    
+                    const totalFunds = transactions.reduce((sum, t) => sum + t.amount, 0);
+                    document.getElementById('totalFunds').textContent = `₹${totalFunds.toLocaleString('en-IN')}`;
+                    
+                    const approved = transactions.filter(t => t.status === 'approved').length;
+                    document.getElementById('approvedCount').textContent = approved;
+                    
+                    const flagged = transactions.filter(t => t.status === 'flagged').length;
+                    document.getElementById('flaggedCount').textContent = flagged;
+                }
+            } catch (error) {
+                console.error('Failed to load dashboard data:', error);
+            }
+        }
+
+        async function loadAllTransactions() {
+            try {
+                const response = await fetch('/api/transactions');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayTransactionsWithActions(data.data, 'transactionsList');
+                }
+            } catch (error) {
+                document.getElementById('transactionsList').innerHTML = 'Failed to load transactions.';
+            }
+        }
+
+        async function loadTransactionsByStatus(status) {
+            try {
+                const response = await fetch(`/api/transactions?status=${status}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const containerId = status === 'flagged' ? 'flaggedList' : 'approvedList';
+                    displayTransactionsWithActions(data.data, containerId);
+                }
+            } catch (error) {
+                const containerId = status === 'flagged' ? 'flaggedList' : 'approvedList';
+                document.getElementById(containerId).innerHTML = 'Failed to load transactions.';
+            }
+        }
+
+        function displayTransactionsWithActions(transactions, containerId) {
+            const container = document.getElementById(containerId);
+            
+            if (transactions.length === 0) {
+                container.innerHTML = '<p>No transactions found.</p>';
+                return;
+            }
+            
+            container.innerHTML = transactions.map(transaction => `
+                <div class="transaction-card ${transaction.status}">
+                    <h3>${transaction.title}</h3>
+                    <p class="amount">₹${transaction.amount.toLocaleString('en-IN')}</p>
+                    <p class="description">${transaction.description}</p>
+                    <p class="department">${transaction.fromDepartment} → ${transaction.toDepartment}</p>
+                    <p class="category">Category: ${transaction.category}</p>
+                    <p class="stats">👍 ${transaction.approvals} approvals | 🚩 ${transaction.flags} flags</p>
+                    <div class="action-buttons">
+                        <button onclick="reportTransaction('${transaction._id}', 'approve')" class="btn btn-small btn-approve">
+                            👍 Approve
+                        </button>
+                        <button onclick="reportTransaction('${transaction._id}', 'flag')" class="btn btn-small btn-flag">
+                            🚩 Flag
+                        </button>
+                    </div>
+                    <span class="status-badge status-${transaction.status}">${transaction.status}</span>
+                </div>
+            `).join('');
+        }
+
+        async function reportTransaction(transactionId, type) {
+            let reason = '';
+            let description = '';
+            
+            if (type === 'flag') {
+                reason = prompt('Please provide a reason for flagging this transaction:');
+                if (!reason) return;
+                
+                description = prompt('Additional details (optional):') || '';
+            } else {
+                const confirmed = confirm('Are you sure you want to approve this transaction?');
+                if (!confirmed) return;
+            }
+            
+            try {
+                const response = await fetch('/api/reports', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({
+                        transactionId,
+                        type,
+                        reason,
+                        description
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showMessage(`Transaction ${type}ed successfully!`, 'success');
+                    // Refresh the current section
+                    const activeSection = document.querySelector('.dashboard-section:not([style*="display: none"])').id;
+                    if (activeSection === 'transactions') {
+                        loadAllTransactions();
+                    } else if (activeSection === 'flagged') {
+                        loadTransactionsByStatus('flagged');
+                    } else if (activeSection === 'approved') {
+                        loadTransactionsByStatus('approved');
+                    }
+                    loadPublicDashboard(); // Refresh stats
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('Failed to submit report. Please try again.', 'error');
+            }
+        }
+
+        function filterTransactions() {
+            const status = document.getElementById('statusFilter')?.value || '';
+            const category = document.getElementById('categoryFilter')?.value || '';
+            
+            let url = '/api/transactions?';
+            if (status) url += `status=${status}&`;
+            if (category) url += `category=${category}&`;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayTransactionsWithActions(data.data, 'transactionsList');
+                    }
+                })
+                .catch(error => {
+                    console.error('Filter error:', error);
+                });
+        }
+    </script>
+</body>
+</html>
