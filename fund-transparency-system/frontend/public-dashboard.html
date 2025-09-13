@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root {
+         :root {
             /* Light Mode Colors */
             --primary-blue: #1e40af;
             --primary-light: #3b82f6;
@@ -835,6 +835,865 @@
             }
         }
     </style>
+    <style>
+        :root {
+            /* Light Mode Colors */
+            --primary-blue: #1e40af;
+            --primary-light: #3b82f6;
+            --accent-gold: #f59e0b;
+            --success-green: #10b981;
+            --public-green: #059669;
+            --warning-orange: #f97316;
+            --danger-red: #ef4444;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --border-light: #e5e7eb;
+            --sidebar-bg: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+            --sidebar-width: 280px;
+        }
+
+        /* Dark Mode Colors */
+        body.dark {
+            --text-dark: #f9fafb;
+            --text-light: #d1d5db;
+            --bg-light: #111827;
+            --bg-white: #1f2937;
+            --border-light: #374151;
+            --sidebar-bg: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--sidebar-bg);
+            color: white;
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+            overflow-y: auto;
+        }
+
+        .sidebar.show {
+            transform: translateX(0);
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            position: relative;
+        }
+
+        .sidebar-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.25rem;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-header .logo {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-header .subtitle {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+
+        .user-info {
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--accent-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+
+        .user-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-role {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            border-left-color: var(--accent-gold);
+        }
+
+        .nav-item .icon {
+            font-size: 1.25rem;
+            width: 24px;
+        }
+
+        .nav-item.logout {
+            margin-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fca5a5;
+        }
+
+        .nav-item.logout:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-left-color: var(--danger-red);
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: var(--bg-white);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-light);
+            position: sticky;
+            top: 0;
+            z-index: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-dark);
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-toggle:hover {
+            background: var(--bg-light);
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .transparency-badge {
+            background: linear-gradient(135deg, var(--public-green), var(--success-green));
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .search-bar {
+            position: relative;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 2px solid var(--border-light);
+            border-radius: 25px;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--public-green);
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            background: var(--bg-light);
+            border: 2px solid var(--border-light);
+            color: var(--text-dark);
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.25rem;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--public-green);
+            color: white;
+            transform: scale(1.1) rotate(15deg);
+            border-color: var(--public-green);
+        }
+
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-light);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            border: 2px solid var(--border-light);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .profile-trigger:hover {
+            background: var(--public-green);
+            color: white;
+            border-color: var(--public-green);
+        }
+
+        .profile-trigger .avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--accent-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        /* Main Content */
+        .main-content {
+            transition: margin-left 0.3s ease;
+        }
+
+        .content-area {
+            padding: 2rem;
+            min-height: calc(100vh - 80px);
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-white);
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--public-green), var(--success-green));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-title {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-icon {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--public-green), var(--success-green));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-description {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        /* Section Cards */
+        .section-card {
+            background: var(--bg-white);
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            border: 1px solid var(--border-light);
+            transition: background-color 0.3s ease;
+        }
+
+        .card-header {
+            padding: 1.5rem 2rem;
+            background: var(--bg-light);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        /* Charts Container */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-container {
+            background: var(--bg-white);
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-light);
+        }
+
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        /* Transaction Cards */
+        .transactions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .transaction-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .transaction-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--public-green);
+        }
+
+        .transaction-header {
+            margin-bottom: 1rem;
+        }
+
+        .transaction-id {
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.75rem;
+            color: var(--text-light);
+            background: var(--bg-light);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        .transaction-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .transaction-amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--success-green);
+            margin-bottom: 1rem;
+        }
+
+        .transaction-details {
+            margin-bottom: 1rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--bg-light);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .detail-value {
+            font-size: 0.875rem;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .department-flow {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: var(--bg-light);
+            border-radius: 8px;
+        }
+
+        .arrow {
+            color: var(--public-green);
+            font-weight: 600;
+        }
+
+        .transaction-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-approved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-flagged {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .interaction-stats {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.75rem;
+            color: var(--text-light);
+            background: var(--bg-light);
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-approve {
+            background: var(--success-green);
+            color: white;
+        }
+
+        .btn-approve:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .btn-flag {
+            background: var(--danger-red);
+            color: white;
+        }
+
+        .btn-flag:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+
+        /* Filter Controls */
+        .filter-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .filter-input {
+            padding: 0.75rem;
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            background: var(--bg-white);
+            color: var(--text-dark);
+            transition: border-color 0.2s ease;
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: var(--public-green);
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+
+        .search-container {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-input-filter {
+            width: 100%;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--public-green);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #047857;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--text-light);
+            color: white;
+        }
+
+        /* Loading States */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            color: var(--text-light);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border-light);
+            border-top: 4px solid var(--public-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Messages */
+        .message {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .message.success {
+            background: #f0fdf4;
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
+        }
+
+        .message.error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        /* Empty States */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-light);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .top-bar {
+                padding: 1rem;
+            }
+            
+            .search-bar {
+                display: none;
+            }
+            
+            .transparency-badge {
+                display: none;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .transactions-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .content-area {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .top-bar-right {
+                gap: 0.5rem;
+            }
+            
+            .theme-toggle {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
+            }
+            
+            .profile-trigger {
+                padding: 0.25rem 0.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Sidebar Overlay -->
@@ -899,6 +1758,11 @@
             </div>
             
             <div class="top-bar-right">
+                <div class="transparency-badge">
+                    <span>🔍</span>
+                    <span>Live Transparency</span>
+                </div>
+                
                 <button class="theme-toggle" id="themeToggle" title="Toggle Dark Mode">
                     <span id="themeIcon">🌙</span>
                 </button>
@@ -958,6 +1822,7 @@
                     </div>
                 </div>
 
+
                 <!-- Recent Transactions -->
                 <div class="section-card">
                     <div class="card-header">
@@ -983,6 +1848,42 @@
                         <span style="color: var(--text-light); font-size: 0.875rem;">Complete transparency view</span>
                     </div>
                     <div class="card-body">
+                        <!-- Filter Controls -->
+                        <div class="filter-controls">
+                            <div class="filter-group search-container">
+                                <label class="filter-label">Search Transactions</label>
+                                <input type="text" class="filter-input search-input-filter" id="searchInputFilter" placeholder="Search by title, department, or purpose...">
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">Status</label>
+                                <select class="filter-input" id="statusFilter">
+                                    <option value="">All Status</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="approved">Approved</option>
+                                    <option value="flagged">Flagged</option>
+                                    <option value="rejected">Rejected</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">Category</label>
+                                <select class="filter-input" id="categoryFilter">
+                                    <option value="">All Categories</option>
+                                    <option value="Education">Education</option>
+                                    <option value="Healthcare">Healthcare</option>
+                                    <option value="Infrastructure">Infrastructure</option>
+                                    <option value="Defense">Defense</option>
+                                    <option value="Agriculture">Agriculture</option>
+                                    <option value="Technology">Technology</option>
+                                    <option value="Social Welfare">Social Welfare</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">&nbsp;</label>
+                                <button class="btn btn-primary" onclick="applyFilters()">🔍 Filter</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Transactions List -->
                         <div id="allTransactionsList" class="transactions-grid">
                             <div class="loading">
                                 <div class="loading-spinner"></div>
@@ -1028,7 +1929,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Comments Section -->
             <div id="comments" class="content-section">
                 <div class="section-card">
@@ -1055,6 +1955,9 @@
         let currentUser = null;
         let authToken = null;
         let allTransactions = [];
+        let filteredTransactions = [];
+        let categoryChart = null;
+        let statusChart = null;
 
         // Initialize Dashboard
         window.addEventListener('load', function() {
@@ -1147,37 +2050,10 @@
         async function initializeDashboard() {
             await loadAllTransactions();
             await loadDashboardStats();
+            createCharts();
             loadRecentTransactions();
         }
-
-        // API Helper
-        async function apiCall(endpoint, options = {}) {
-            try {
-                const config = {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${authToken}`,
-                        ...options.headers
-                    },
-                    ...options
-                };
-                
-                const response = await fetch(`${API_BASE}${endpoint}`, config);
-                
-                if (response.status === 401) {
-                    logout();
-                    return { success: false, message: 'Authentication required' };
-                }
-                
-                const data = await response.json();
-                return data;
-            } catch (error) {
-                console.error('API Error:', error);
-                return { success: false, message: 'Network error occurred' };
-            }
-        }
-
-        // Currency Formatter
+                // Currency Formatter
         function formatCurrency(amount) {
             const numAmount = parseFloat(amount) || 0;
             
@@ -1191,198 +2067,6 @@
                 return `₹${numAmount.toLocaleString('en-IN')}`;
             }
         }
-
-        // Load All Transactions
-        async function loadAllTransactions() {
-            try {
-                const response = await apiCall('/transactions');
-                if (response.success) {
-                    allTransactions = response.data;
-                    displayAllTransactions();
-                }
-            } catch (error) {
-                showMessage('Failed to load transactions', 'error');
-            }
-        }
-
-        // Load Dashboard Statistics
-        async function loadDashboardStats() {
-            try {
-                const total = allTransactions.length;
-                const totalAmount = allTransactions.reduce((sum, t) => sum + (t.amount || 0), 0);
-                const approved = allTransactions.filter(t => t.status === 'approved').length;
-                const flagged = allTransactions.filter(t => t.status === 'flagged').length;
-                
-                document.getElementById('totalTransactions').textContent = total.toLocaleString();
-                document.getElementById('totalFunds').textContent = formatCurrency(totalAmount);
-                document.getElementById('approvedTransactions').textContent = approved.toLocaleString();
-                document.getElementById('flaggedTransactions').textContent = flagged.toLocaleString();
-            } catch (error) {
-                showMessage('Failed to load dashboard statistics', 'error');
-            }
-        }
-
-        // Load Recent Transactions
-        function loadRecentTransactions() {
-            const container = document.getElementById('recentTransactions');
-            const recent = allTransactions.slice(0, 6);
-            
-            if (recent.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: var(--text-light);">No transactions available</p>';
-                return;
-            }
-            
-            container.innerHTML = `
-                <div class="transactions-grid">
-                    ${recent.map(transaction => createTransactionCard(transaction, false)).join('')}
-                </div>
-            `;
-        }
-
-        // Display All Transactions
-        function displayAllTransactions() {
-            const container = document.getElementById('allTransactionsList');
-            
-            if (allTransactions.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">📭</div>
-                        <h3>No Transactions Found</h3>
-                        <p>Check back later for updates</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            container.innerHTML = allTransactions.map(transaction => createTransactionCard(transaction, true)).join('');
-        }
-
-        // Create Transaction Card
-        function createTransactionCard(transaction, showActions = true) {
-            return `
-                <div class="transaction-card">
-                    <div class="transaction-header">
-                        <div class="transaction-id">#${(transaction.transactionId || transaction._id || '').substring(0, 8)}...</div>
-                        <div class="transaction-title">${transaction.title || 'Government Transaction'}</div>
-                        <div class="transaction-amount">${formatCurrency(transaction.amount || 0)}</div>
-                    </div>
-                    
-                    <div class="department-flow">
-                        <span>${transaction.fromDepartment || 'Department'}</span>
-                        <span class="arrow">→</span>
-                        <span>${transaction.toDepartment || 'Department'}</span>
-                    </div>
-                    
-                    <p style="color: var(--text-light); margin-bottom: 1rem; line-height: 1.4; font-size: 0.875rem;">
-                        ${(transaction.description || 'Government fund transaction for public welfare').substring(0, 120)}${(transaction.description || '').length > 120 ? '...' : ''}
-                    </p>
-                    
-                    <div class="transaction-footer">
-                        <span class="status-badge status-${(transaction.status || 'pending').toLowerCase()}">${transaction.status || 'Pending'}</span>
-                        <div class="interaction-stats">
-                            <button style="background: none; border: none; color: var(--text-light); font-size: 0.75rem; cursor: pointer;" 
-                                    onclick="viewComments('${transaction._id}', '${transaction.title}')">
-                                💬 View Comments
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Navigation Functions
-        function showSection(sectionId) {
-            // Update active nav item
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            if (event && event.target) {
-                event.target.closest('.nav-item')?.classList.add('active');
-            }
-            
-            // Update page title
-            const titles = {
-                'overview': 'Public Transparency Dashboard',
-                'all-transactions': 'All Government Transactions',
-                'flagged': 'Flagged Transactions',
-                'approved': 'Approved Transactions',
-                'comments': 'Transaction Comments & Feedback'
-            };
-            
-            document.getElementById('pageTitle').textContent = titles[sectionId] || 'Public Dashboard';
-            
-            // Show section
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            
-            document.getElementById(sectionId).classList.add('active');
-            
-            // Load section-specific data
-            if (sectionId === 'all-transactions') {
-                displayAllTransactions();
-            } else if (sectionId === 'flagged') {
-                loadFlaggedTransactions();
-            } else if (sectionId === 'approved') {
-                loadApprovedTransactions();
-            } else if (sectionId === 'comments') {
-                loadCommentsSection();
-            }
-            
-            // Close sidebar on mobile
-            if (window.innerWidth <= 768) {
-                document.getElementById('sidebar').classList.remove('show');
-                document.getElementById('sidebarOverlay').classList.remove('active');
-            }
-        }
-
-        // Load Flagged Transactions
-        function loadFlaggedTransactions() {
-            const container = document.getElementById('flaggedTransactionsList');
-            const flagged = allTransactions.filter(t => t.status === 'flagged');
-            
-            if (flagged.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">✅</div>
-                        <h3>No Flagged Transactions</h3>
-                        <p>All transactions are currently in good standing</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            container.innerHTML = `
-                <div class="transactions-grid">
-                    ${flagged.map(transaction => createTransactionCard(transaction, false)).join('')}
-                </div>
-            `;
-        }
-
-        // Load Approved Transactions
-        function loadApprovedTransactions() {
-            const container = document.getElementById('approvedTransactionsList');
-            const approved = allTransactions.filter(t => t.status === 'approved');
-            
-            if (approved.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">⏳</div>
-                        <h3>No Approved Transactions Yet</h3>
-                        <p>Help review transactions to build community trust</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            container.innerHTML = `
-                <div class="transactions-grid">
-                    ${approved.map(transaction => createTransactionCard(transaction, false)).join('')}
-                </div>
-            `;
-        }
-
         // Load Comments Section
         async function loadCommentsSection() {
             const container = document.getElementById('commentsContent');
@@ -1548,6 +2232,413 @@
                     element.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             }, 100);
+        }
+        // API Helper
+        async function apiCall(endpoint, options = {}) {
+            try {
+                const config = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`,
+                        ...options.headers
+                    },
+                    ...options
+                };
+                
+                const response = await fetch(`${API_BASE}${endpoint}`, config);
+                
+                if (response.status === 401) {
+                    logout();
+                    return { success: false, message: 'Authentication required' };
+                }
+                
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('API Error:', error);
+                return { success: false, message: 'Network error occurred' };
+            }
+        }
+
+        // Load All Transactions
+        async function loadAllTransactions() {
+            try {
+                const response = await apiCall('/transactions');
+                if (response.success) {
+                    allTransactions = response.data;
+                    filteredTransactions = allTransactions;
+                    displayAllTransactions();
+                }
+            } catch (error) {
+                showMessage('Failed to load transactions', 'error');
+            }
+        }
+
+        // Load Dashboard Statistics
+        async function loadDashboardStats() {
+            try {
+                const total = allTransactions.length;
+                const totalAmount = allTransactions.reduce((sum, t) => sum + (t.amount || 0), 0);
+                const approved = allTransactions.filter(t => t.status === 'approved').length;
+                const flagged = allTransactions.filter(t => t.status === 'flagged').length;
+                
+                document.getElementById('totalTransactions').textContent = total.toLocaleString();
+                document.getElementById('totalFunds').textContent = `₹${totalAmount.toLocaleString('en-IN')}`;
+                document.getElementById('approvedTransactions').textContent = approved.toLocaleString();
+                document.getElementById('flaggedTransactions').textContent = flagged.toLocaleString();
+                
+                updateCharts();
+            } catch (error) {
+                showMessage('Failed to load dashboard statistics', 'error');
+            }
+        }
+
+        // Create Charts
+        function createCharts() {
+            // Category Chart
+            const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+            categoryChart = new Chart(categoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: [
+                            '#059669', '#10b981', '#f59e0b', '#1e40af', 
+                            '#f97316', '#ef4444', '#8b5cf6'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Status Chart
+            const statusCtx = document.getElementById('statusChart').getContext('2d');
+            statusChart = new Chart(statusCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Pending', 'Approved', 'Flagged', 'Rejected'],
+                    datasets: [{
+                        label: 'Transactions',
+                        data: [0, 0, 0, 0],
+                        backgroundColor: ['#f59e0b', '#10b981', '#ef4444', '#6b7280']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update Charts
+        function updateCharts() {
+            if (!allTransactions.length) return;
+            
+            // Update Category Chart
+            const categoryData = {};
+            allTransactions.forEach(t => {
+                categoryData[t.category] = (categoryData[t.category] || 0) + (t.amount || 0);
+            });
+            
+            categoryChart.data.labels = Object.keys(categoryData);
+            categoryChart.data.datasets[0].data = Object.values(categoryData);
+            categoryChart.update();
+            
+            // Update Status Chart
+            const statusData = {
+                pending: allTransactions.filter(t => t.status === 'pending').length,
+                approved: allTransactions.filter(t => t.status === 'approved').length,
+                flagged: allTransactions.filter(t => t.status === 'flagged').length,
+                rejected: allTransactions.filter(t => t.status === 'rejected').length
+            };
+            
+            statusChart.data.datasets[0].data = [
+                statusData.pending, statusData.approved, 
+                statusData.flagged, statusData.rejected
+            ];
+            statusChart.update();
+        }
+
+        // Load Recent Transactions
+        function loadRecentTransactions() {
+            const container = document.getElementById('recentTransactions');
+            const recent = allTransactions.slice(0, 6);
+            
+            if (recent.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-light);">No transactions available</p>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="transactions-grid">
+                    ${recent.map(transaction => createTransactionCard(transaction, false)).join('')}
+                </div>
+            `;
+        }
+
+        // Display All Transactions
+        function displayAllTransactions() {
+            const container = document.getElementById('allTransactionsList');
+            
+            if (filteredTransactions.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <h3>No Transactions Found</h3>
+                        <p>Try adjusting your search or filter criteria</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = filteredTransactions.map(transaction => createTransactionCard(transaction, true)).join('');
+        }
+
+        // Create Transaction Card
+        function createTransactionCard(transaction, showActions = true) {
+            return `
+                <div class="transaction-card">
+                    <div class="transaction-header">
+                        <div class="transaction-id">#${(transaction.transactionId || transaction._id || '').substring(0, 8)}...</div>
+                        <div class="transaction-title">${transaction.title || 'Government Transaction'}</div>
+                        <div class="transaction-amount">₹${(transaction.amount || 0).toLocaleString('en-IN')}</div>
+                    </div>
+                    
+                    <div class="department-flow">
+                        <span>${transaction.fromDepartment || 'Department'}</span>
+                        <span class="arrow">→</span>
+                        <span>${transaction.toDepartment || 'Department'}</span>
+                    </div>
+                    
+                    <div class="transaction-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Category</span>
+                            <span class="detail-value">${transaction.category || 'General'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Date</span>
+                            <span class="detail-value">${new Date(transaction.createdAt || Date.now()).toLocaleDateString('en-IN')}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Created By</span>
+                            <span class="detail-value">${transaction.createdBy?.name || 'Government Official'}</span>
+                        </div>
+                    </div>
+                    
+                    <p style="color: var(--text-light); margin-bottom: 1rem; line-height: 1.4; font-size: 0.875rem;">
+                        ${(transaction.description || 'Government fund transaction for public welfare').substring(0, 120)}${(transaction.description || '').length > 120 ? '...' : ''}
+                    </p>
+                    
+                    <div class="transaction-footer">
+                        <span class="status-badge status-${(transaction.status || 'pending').toLowerCase()}">${transaction.status || 'Pending'}</span>
+                        <div class="interaction-stats">
+                            <div class="stat-item">
+                                <span>👍</span>
+                                <span>${transaction.approvals || 0}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>🚩</span>
+                                <span>${transaction.flags || 0}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    ${showActions ? `
+                        <div class="action-buttons">
+                            <button class="action-btn btn-approve" onclick="approveTransaction('${transaction._id}')">
+                                👍 Approve
+                            </button>
+                            <button class="action-btn btn-flag" onclick="flagTransaction('${transaction._id}')">
+                                🚩 Flag Issue
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // Navigation Functions
+        function showSection(sectionId) {
+            // Update active nav item
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            if (event && event.target) {
+                event.target.closest('.nav-item')?.classList.add('active');
+            }
+            
+            // Update page title
+            const titles = {
+                'overview': 'Public Transparency Dashboard',
+                'all-transactions': 'All Government Transactions',
+                'flagged': 'Flagged Transactions',
+                'approved': 'Approved Transactions',
+                'comments': 'Transaction Comments & Feedback'
+
+            };
+            
+            document.getElementById('pageTitle').textContent = titles[sectionId] || 'Public Dashboard';
+            
+            // Show section
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Load section-specific data
+            if (sectionId === 'all-transactions') {
+                displayAllTransactions();
+            } else if (sectionId === 'flagged') {
+                loadFlaggedTransactions();
+            } else if (sectionId === 'approved') {
+                loadApprovedTransactions();
+            } else if (sectionId === 'comments') {
+                loadCommentsSection();
+            }
+            
+            // Close sidebar on mobile
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('show');
+                document.getElementById('sidebarOverlay').classList.remove('active');
+            }
+        }
+
+        // Load Flagged Transactions
+        function loadFlaggedTransactions() {
+            const container = document.getElementById('flaggedTransactionsList');
+            const flagged = allTransactions.filter(t => t.status === 'flagged');
+            
+            if (flagged.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">✅</div>
+                        <h3>No Flagged Transactions</h3>
+                        <p>All transactions are currently in good standing</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="transactions-grid">
+                    ${flagged.map(transaction => createTransactionCard(transaction, false)).join('')}
+                </div>
+            `;
+        }
+
+        // Load Approved Transactions
+        function loadApprovedTransactions() {
+            const container = document.getElementById('approvedTransactionsList');
+            const approved = allTransactions.filter(t => t.status === 'approved');
+            
+            if (approved.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">⏳</div>
+                        <h3>No Approved Transactions Yet</h3>
+                        <p>Help review transactions to build community trust</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="transactions-grid">
+                    ${approved.map(transaction => createTransactionCard(transaction, false)).join('')}
+                </div>
+            `;
+        }
+
+        // Apply Filters
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInputFilter').value.toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+            const category = document.getElementById('categoryFilter').value;
+            
+            filteredTransactions = allTransactions.filter(transaction => {
+                const matchesSearch = !searchTerm || 
+                    (transaction.title || '').toLowerCase().includes(searchTerm) ||
+                    (transaction.fromDepartment || '').toLowerCase().includes(searchTerm) ||
+                    (transaction.toDepartment || '').toLowerCase().includes(searchTerm) ||
+                    (transaction.description || '').toLowerCase().includes(searchTerm);
+                
+                const matchesStatus = !status || (transaction.status || '').toLowerCase() === status.toLowerCase();
+                const matchesCategory = !category || transaction.category === category;
+                
+                return matchesSearch && matchesStatus && matchesCategory;
+            });
+            
+            displayAllTransactions();
+        }
+
+        // Transaction Actions
+        async function approveTransaction(transactionId) {
+            try {
+                const response = await apiCall('/reports', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        transactionId,
+                        type: 'approve'
+                    })
+                });
+
+                if (response.success) {
+                    showMessage('Transaction approved successfully! Thank you for your participation.', 'success');
+                    await loadAllTransactions();
+                    await loadDashboardStats();
+                } else {
+                    showMessage(response.message || 'Failed to approve transaction', 'error');
+                }
+            } catch (error) {
+                showMessage('Error approving transaction', 'error');
+            }
+        }
+
+        async function flagTransaction(transactionId) {
+            const reason = prompt('Please provide a reason for flagging this transaction:');
+            if (!reason || reason.trim() === '') return;
+
+            try {
+                const response = await apiCall('/reports', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        transactionId,
+                        type: 'flag',
+                        reason: reason.trim()
+                    })
+                });
+
+                if (response.success) {
+                    showMessage('Transaction flagged successfully! Your report has been submitted for review.', 'success');
+                    await loadAllTransactions();
+                    await loadDashboardStats();
+                } else {
+                    showMessage(response.message || 'Failed to flag transaction', 'error');
+                }
+            } catch (error) {
+                showMessage('Error flagging transaction', 'error');
+            }
         }
 
         // Utility Functions
